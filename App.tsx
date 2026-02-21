@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Rocket, ShieldAlert } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { InputForm } from './components/InputForm';
 import { ContentDisplay } from './components/ContentDisplay';
 import { Spinner } from './components/Spinner';
@@ -39,77 +40,116 @@ const App: React.FC = () => {
       {/* Glass Header */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b border-white/50 supports-[backdrop-filter]:bg-white/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3 group cursor-pointer">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-3 group cursor-pointer"
+          >
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-xl shadow-lg shadow-indigo-500/30 flex items-center justify-center transform transition-transform group-hover:scale-105 group-hover:rotate-3">
               <Rocket className="w-5 h-5 text-white" />
             </div>
             <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 tracking-tight">
               Dr.Content
             </h1>
-          </div>
+          </motion.div>
         </div>
       </header>
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
-        <div className="text-center mb-16 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm font-medium mb-6 animate-fade-in-up">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-center mb-16 max-w-3xl mx-auto"
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm font-medium mb-6">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
             </span>
             AI-Powered Growth
           </div>
-          <h2 className="text-5xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight animate-fade-in-up animation-delay-100">
+          <h2 className="text-5xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">
             Create content that <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">scales your brand</span>
           </h2>
-          <p className="text-xl text-slate-600 leading-relaxed animate-fade-in-up animation-delay-200">
+          <p className="text-xl text-slate-600 leading-relaxed">
             Generate engagement-ready content strategies for LinkedIn, Twitter, and more in seconds.
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column: Input */}
-          <div className="lg:col-span-5 xl:col-span-4 sticky top-28 z-10">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="lg:col-span-5 xl:col-span-4 sticky top-28 z-10"
+          >
             <InputForm onSubmit={handleGenerate} isLoading={state.isLoading} />
-          </div>
+          </motion.div>
 
           {/* Right Column: Output */}
           <div className="lg:col-span-7 xl:col-span-8 min-h-[500px]">
-            {state.error && (
-              <div className="bg-red-50/80 backdrop-blur-sm border border-red-200/60 rounded-2xl p-6 flex items-start gap-4 text-red-700 animate-fade-in shadow-sm">
-                <div className="p-2 bg-red-100 rounded-full">
-                  <ShieldAlert className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">Generation Failed</h3>
-                  <p className="text-red-600/90 mt-1 leading-relaxed">{state.error}</p>
-                </div>
-              </div>
-            )}
+            <AnimatePresence mode="wait">
+              {state.error && (
+                <motion.div 
+                  key="error"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="bg-red-50/80 backdrop-blur-sm border border-red-200/60 rounded-2xl p-6 flex items-start gap-4 text-red-700 shadow-sm"
+                >
+                  <div className="p-2 bg-red-100 rounded-full">
+                    <ShieldAlert className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">Generation Failed</h3>
+                    <p className="text-red-600/90 mt-1 leading-relaxed">{state.error}</p>
+                  </div>
+                </motion.div>
+              )}
 
-            {state.isLoading && (
-              <div className="bg-white/60 backdrop-blur-md rounded-2xl shadow-xl shadow-indigo-100/50 border border-white/60 p-16 flex justify-center">
-                <Spinner />
-              </div>
-            )}
+              {state.isLoading && (
+                <motion.div 
+                  key="loading"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="bg-white/60 backdrop-blur-md rounded-2xl shadow-xl shadow-indigo-100/50 border border-white/60 p-16 flex justify-center"
+                >
+                  <Spinner />
+                </motion.div>
+              )}
 
-            {!state.isLoading && !state.result && !state.error && (
-              <div className="bg-white/60 backdrop-blur-md rounded-2xl border-2 border-dashed border-slate-200/60 p-16 text-center h-full flex flex-col items-center justify-center group hover:border-indigo-300/50 transition-colors">
-                <div className="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-inner">
-                  <Rocket className="w-10 h-10 text-slate-300 group-hover:text-indigo-400 transition-colors" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Ready to Takeoff?</h3>
-                <p className="text-slate-500 max-w-sm mx-auto leading-relaxed">
-                  Configure your strategy on the left and watch the AI magic happen right here.
-                </p>
-              </div>
-            )}
+              {!state.isLoading && !state.result && !state.error && (
+                <motion.div 
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="bg-white/60 backdrop-blur-md rounded-2xl border-2 border-dashed border-slate-200/60 p-16 text-center h-full flex flex-col items-center justify-center group hover:border-indigo-300/50 transition-colors"
+                >
+                  <div className="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-inner">
+                    <Rocket className="w-10 h-10 text-slate-300 group-hover:text-indigo-400 transition-colors" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">Ready to Takeoff?</h3>
+                  <p className="text-slate-500 max-w-sm mx-auto leading-relaxed">
+                    Configure your strategy on the left and watch the AI magic happen right here.
+                  </p>
+                </motion.div>
+              )}
 
-            {state.result && (
-              <ContentDisplay content={state.result} />
-            )}
+              {state.result && (
+                <motion.div
+                  key="result"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <ContentDisplay content={state.result} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </main>
